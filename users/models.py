@@ -1,15 +1,22 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
-def user_avatar_path(instance, filename):
-    return f"avatars/user_{instance.id}/{filename}"
 
-class CustomUser(AbstractUser):
-    name = models.CharField(max_length=255)
-    email = models.EmailField(unique=True)
-    avatar = models.ImageField(upload_to=user_avatar_path, blank=True, null=True)
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100, blank=True)
+    avatar = models.ImageField(upload_to='avatars/', blank=True)
 
-    def delete(self, *args, **kwargs):
-        if self.avatar:
-            self.avatar.delete()
-        super().delete(*args, **kwargs)
+    def __str__(self):
+        return self.user.username
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()

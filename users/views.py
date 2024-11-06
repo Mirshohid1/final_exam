@@ -1,14 +1,11 @@
-from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
-from .models import CustomUser
-from .forms import UserCreationForm
+from django.contrib.auth.models import User
+from .forms import RegisterForm
 
-class Dashboard(TemplateView):
-    template_name = 'index.html'
 
 class RegisterView(CreateView):
-    model = CustomUser
-    form_class = UserCreationForm
+    model = User
+    form_class = RegisterForm
     template_name = 'register.html'
-    success_url = 'users:dashboard'
+    success_url = reverse_lazy('users:login')
