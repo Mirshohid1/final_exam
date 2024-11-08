@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Posts - Blog Site</title>
+    <title>{% block title %}All Posts - Blog Site{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -15,12 +15,12 @@
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center">
-                        <a href="/" class="text-2xl font-bold text-indigo-600">BlogSite</a>
+                        <a href="{% url 'home' %}" class="text-2xl font-bold text-indigo-600">BlogSite</a>
                     </div>
                     <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                        <a href="/"
+                        <a href="{% url 'home' %}"
                             class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Home</a>
-                        <a href="/all-posts.html"
+                        <a href="{% url 'all-posts' %}"
                             class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">All
                             Posts</a>
                         <a href="/create-post.html"
@@ -121,7 +121,7 @@
             <div class="pt-2 pb-3 space-y-1">
                 <a href="/"
                     class="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Home</a>
-                <a href=" /all-posts.html"
+                <a href="{% url 'all-posts' %}"
                     class="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">All
                     Posts</a>
                 <a href="/create-post.html"
@@ -181,7 +181,7 @@
         </div>
     </nav>
 
-
+{% block content %}
     <!-- Main content -->
     <main class="flex-grow container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold mb-6">Followed Posts</h1>
@@ -228,7 +228,7 @@
             </div>
         </div>
     </main>
-
+{% endblock %}
     <!-- Footer -->
     <footer class="bg-white shadow-md mt-8">
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
