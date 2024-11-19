@@ -156,3 +156,5 @@ class DeletePostView(LoginRequiredMixin, DeleteView):
             context['comment_notifications'] = []
 
         return context
+
+# finish
