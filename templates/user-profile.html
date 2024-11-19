@@ -1,0 +1,114 @@
+{% extends 'index.html' %}
+{% block title %}User Profile - Blog Site{% endblock %}
+{% block content %}
+{% load static %}
+<!-- Main content -->
+{% if user.is_authenticated %}
+<main class="flex-grow container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <div class="flex flex-col sm:flex-row items-center mb-4">
+                {% if customuser.avatar %}
+                <img src="{{ customuser.avatar.url }}"
+                     alt="User Avatar"
+                     class="w-20 h-20 rounded-full mr-4 mb-4 sm:mb-0">
+                {% else %}
+                <img src="{% static 'images/user_default-image.jpeg' %}"
+                     alt="User Avatar"
+                     class="w-20 h-20 rounded-full mr-4 mb-4 sm:mb-0">
+                {% endif %}
+                <div class="text-center sm:text-left">
+                    <h1 class="text-2xl font-bold">{{ customuser.name }}</h1>
+                    <p class="text-gray-600">@{{ customuser.username }}</p>
+                </div>
+
+                <!-- Follow/Unfollow Button and Edit Profile -->
+                <div class="mt-4 sm:mt-0 sm:ml-auto">
+                    <!-- Edit Profile button for current user's profile -->
+                    <!-- Assuming you will check if this is the current user's profile -->
+                    {% if user == customuser %}
+                    <a href="{% url 'users:edit-profile' pk=user.pk %}"
+                       class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow">
+                        Edit Profile
+                    </a>
+                    {% else %}
+                    <form method="post"
+                          action="{% url 'users:follow-user' username1=user.username username2=customuser.username %}"
+                          style="{% if user in customuser.subscribers.all %}display: none;{% endif %}">
+                        {% csrf_token %}
+                        <button id="followButton"
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Follow
+                        </button>
+                    </form>
+
+                    <form method="post"
+                          action="{% url 'users:unfollow-user' username1=user.username username2=customuser.username %}"
+                          style="{% if user not in customuser.subscribers.all %}display: none;{% endif %}">
+                        {% csrf_token %}
+                        <button id="unfollowButton"
+                                class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            Unfollow
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-center sm:justify-start space-x-4">
+                <span class="font-semibold">
+                    {{ customuser.subscribers.count }} Followers
+                </span>
+                <span class="font-semibold">
+                    {{ customuser.subscriptions.count }} Following
+                </span>
+                <span class="font-semibold">{{ customuser.post_set.count }} Posts</span>
+            </div>
+        </div>
+
+        <h2 class="text-2xl font-bold mb-4">
+            {% if user == customuser %}
+            {% if user.post_set.count == 0 %}
+            You haven't posted yet
+            {% else %}
+            My Posts
+            {% endif %}
+            {% endif %}
+            {% if user != customuser %}
+            {% if customuser.post_set.count == 0 %}
+            The user has not posted yet
+            {% else %}
+            User's Posts
+            {% endif %}
+            {% endif %}
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for post in customuser.post_set.all %}
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                {% if post.image %}
+                <img src="{{ post.image.url }}"
+                     alt="Post Image"
+                     class="w-full h-48 object-cover rounded-lg mb-4">
+                {% else %}
+                <img src="{% static 'images/image_coming-soon.jpg' %}"
+                     alt="Post Image"
+                     class="w-full h-48 object-cover rounded-lg mb-4">
+                {% endif %}
+                <h3 class="text-xl font-bold mb-2">{{ post.title }}</h3>
+                <p class="text-gray-700 mb-4">{{ post.description }}</p>
+                <div class="flex space-x-2">
+                    <a href="{% url 'blog_site:post-detail' pk=post.pk %}"
+                       class="text-indigo-600 hover:text-indigo-800">Read
+                        More</a>
+                    {% if user == customuser %}
+                    <a href="{% url 'blog_site:post-edit' pk=post.pk %}" class="text-green-600 hover:text-green-800">Edit</a>
+                    <a href="{% url 'blog_site:post-delete' pk=post.pk %}" class="text-red-600 hover:text-red-800">Delete</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+{% endif %}
+{% endblock %}
